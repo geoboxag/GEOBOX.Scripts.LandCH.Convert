@@ -14,6 +14,7 @@ define mapsysname = MAPSYS;
 -- CHECK-ID: 021901
 -- Prüfen
 -- *******************************************************************
+call job3.setjob(1);
 -- Prüfen ob beide Werte übereinstimmen
 select * from LM_BU_HOUSE_ENTRANCE en where exists (select 1 from LM_BU_BUILDING bu where bu.FID = en.FID_BU_BUILDING and bu.REGBL_EGID != en.REGBL_EGID and bu.REGBL_EGID is not NULL) and en.REGBL_EGID is not NULL;
 -- wenn nicht ist dies von Hand zur Prüfen und korrigieren.
@@ -23,6 +24,7 @@ select * from LM_BU_BUILDING bu where exists (select 1 from LM_BU_HOUSE_ENTRANCE
 -- CHECK-ID: 021902
 -- Update der Werte
 -- *******************************************************************
+call job3.setjob(-1);
 update LM_BU_BUILDING bu set bu.REGBL_EGID = 
  (select max(en.REGBL_EGID) from LM_BU_HOUSE_ENTRANCE en where bu.FID = en.FID_BU_BUILDING and en.REGBL_EGID is not NULL) 
 where bu.REGBL_EGID is NULL;
@@ -50,9 +52,9 @@ commit;
 -- Prüfen ob das Attribut leer ist (wenn ja, kann direkt mit dem Entfernen weitergemacht werden)
 select count(1) from LM_BU_HOUSE_ENTRANCE where POLICE_NUMBER is not NULL;
 -- Prüfen ob beide Werte übereinstimmen (wenn keine Datensätze angezeigt werden, kann direkt mit dem Entfernen weitergefahren werden)
-select FID, JOB_VERSION, POLICE_NUMBER, HOUSE_NUMBER from LM_BU_HOUSE_ENTRANCE where POLICE_NUMBER is not NULL and POLICE_NUMBER != HOUSE_NUMBER;
+select FID, JOB_VERSION, POLICE_NUMBER, HOUSE_NUMBER from LM_BU_HOUSE_ENTRANCE where (POLICE_NUMBER is not NULL and HOUSE_NUMBER is NULL) or (POLICE_NUMBER != HOUSE_NUMBER);
 -- sonst die Werte beurteilen und in das Attribut HOUSE_NUMBER übertragen
--- update LM_BU_HOUSE_ENTRANCE set HOUSE_NUMBER =POLICE_NUMBER where POLICE_NUMBER is not NULL and POLICE_NUMBER != HOUSE_NUMBER and HOUSE_NUMBER is NULL;
+-- update LM_BU_HOUSE_ENTRANCE set HOUSE_NUMBER = POLICE_NUMBER where (POLICE_NUMBER is not NULL and HOUSE_NUMBER is NULL) or (POLICE_NUMBER != HOUSE_NUMBER) and HOUSE_NUMBER is NULL;
 
 -- *******************************************************************
 -- CHECK-ID: 021906

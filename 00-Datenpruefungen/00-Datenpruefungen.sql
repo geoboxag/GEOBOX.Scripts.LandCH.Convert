@@ -136,3 +136,16 @@ LEFT JOIN (
 ) linked
 ON lo.FID = linked.FID_LO_LOCATION
 WHERE linked.FID_LO_LOCATION IS NULL;
+
+
+
+----------------------------------------------------------------------
+-- Grundstücke
+----------------------------------------------------------------------
+prüfen 
+
+
+update MIG_MUT_INFOS iup set iup.FID_AD_MUTPERIMETER = 
+ (select mp.FID from LM_AD_MUTPERIMETER mp join TB_JOB_VERSION jv on jv.JOB_ID = mp.ID_JOB where jv.JOB_VERSION = iup.JOB_VERSION)
+where iup.FID_AD_MUTPERIMETER is NULL;
+commit;

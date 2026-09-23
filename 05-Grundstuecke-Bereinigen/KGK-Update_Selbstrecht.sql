@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- Selbstrecht - Ist Baurecht eintragen
+-- [KGK] Selbstrechttypen ergänzen
 -- Es sollten möglichst alle Mutationen geschlossen (rechtsgültig sein) oder zurückmutieren.
 ----------------------------------------------------------------------
 -- PUBLIC
@@ -10,7 +10,7 @@
 ----------------------------------------------------------------------
 
 -- *******************************************************************
--- CHECK-ID: 050101
+-- CHECK-ID: 05KGK01
 -- Anzeigen der verwendetn Grundstücksarten (Kategorien)
 -- *******************************************************************
 call job3.setjob(-1);
@@ -21,12 +21,15 @@ select
  (select count(1) from LM_OW_PROPERTY prop where prop.ID_PROPERTY_TYPE = tbd.id) COUNTS
 from
  LM_OW_PROP_CATEGORY_TBD tbd
- where tbd.ID in (3,19)
+ where tbd.ID in (3,4,5,9,15,16,17,18,19)
 order by tbd.ID;
 
 -- *******************************************************************
--- CHECK-ID: 050102
--- Ist Baurecht eintragen
+-- CHECK-ID: 05KGK02
+-- Kategorien umschreiben
 -- *******************************************************************
-update LM_OW_DPR dpr set dpr.IS_DEVELOPMENT_RIGHT = 1 where exists (select 1 from LM_OW_PROPERTY prop where prop.FID = dpr.FID_OW_PROPERTY and prop.ID_PROPERTY_TYPE in (3,19));
+update LM_OW_DPR dpr set dpr.ID_DPR_TYPE = 2 where exists (select 1 from LM_OW_PROPERTY prop where prop.FID = dpr.FID_OW_PROPERTY and prop.ID_PROPERTY_TYPE in (3,19)); -- Baurecht 
+update LM_OW_DPR dpr set dpr.ID_DPR_TYPE = 3 where exists (select 1 from LM_OW_PROPERTY prop where prop.FID = dpr.FID_OW_PROPERTY and prop.ID_PROPERTY_TYPE in (4,15,16)); -- Quellenrecht
+update LM_OW_DPR dpr set dpr.ID_DPR_TYPE = 4 where exists (select 1 from LM_OW_PROPERTY prop where prop.FID = dpr.FID_OW_PROPERTY and prop.ID_PROPERTY_TYPE in (9,17)); -- Konzession
+update LM_OW_DPR dpr set dpr.ID_DPR_TYPE = 10000 where exists (select 1 from LM_OW_PROPERTY prop where prop.FID = dpr.FID_OW_PROPERTY and prop.ID_PROPERTY_TYPE in (5,18)); -- Weitere
 commit;
