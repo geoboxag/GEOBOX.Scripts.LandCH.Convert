@@ -42,5 +42,4 @@ commit;
 -- *******************************************************************
 -- Domain Tabellen
 call &&mapsysname..Domain.dropDomainTable('LM_APPROVAL_TBD');
-
 commit;

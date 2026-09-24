@@ -25,7 +25,6 @@ select name, counts from (
 -- TB_JOB_VERSION bereinigen
 -- *******************************************************************
 delete from TB_JOB_VERSION jv where EXISTS (select * from LM_PI_MULTIPURPOSE_POINT tab where tab.FID = jv.FID);
-
 commit;
 
 -- *******************************************************************
@@ -33,7 +32,6 @@ commit;
 -- TB_UFID bereinigen
 -- *******************************************************************
 delete TB_UFID uf where EXISTS (select 1 from LM_PI_MULTIPURPOSE_POINT tab where tab.FID = uf.FID);
-
 commit;
 
 -- *******************************************************************
@@ -48,7 +46,6 @@ DROP TRIGGER LM_PI_MULTIPURPOSE_POINT_JAD;
 DROP TRIGGER LM_PI_MULTIPURPOSE_POINT_JAU; 
 DROP TRIGGER LM_PI_MULTIPURPOSE_POINT_JBD; 
 DROP TRIGGER LM_PI_MULTIPURPOSE_POINT_JBU; 
-
 commit;
 
 -- *******************************************************************
@@ -59,5 +56,4 @@ commit;
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_PI_MULTIPURPOSE_POINT');
 -- Domain Tabellen
 call &&mapsysname..Domain.dropDomainTable('LM_PI_MULTI_POINTTYPE_TBD');
-
 commit;

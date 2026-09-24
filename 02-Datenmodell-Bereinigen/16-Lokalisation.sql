@@ -161,7 +161,6 @@ where
  lo.ID_NAME_TYPE = 2
  and not exists (select 1 from LM_LO_NAMED_AREA rs where rs.FID_LO_LOCATION = lo.FID);
 
-
 -- *******************************************************************
 -- CHECK-ID: 021609
 -- Prüfen ob jedes Objekte einen Wert haben.
@@ -176,7 +175,6 @@ select * from LM_LO_LOCATION where GRUDA_NUMBER is not NULL and LOCATION_NUMBER 
 -- Schreibt die Werte von der Gruda Numer in das Attribut LN-Nummer
 -- *******************************************************************
 update LM_LO_LOCATION set LOCATION_NUMBER = GRUDA_NUMBER where GRUDA_NUMBER is not NULL and LOCATION_NUMBER is NULL;
-
 
 -- *******************************************************************
 -- CHECK-ID: 021611

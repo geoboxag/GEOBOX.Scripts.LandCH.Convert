@@ -117,7 +117,6 @@ DROP TRIGGER LM_HE_TERRAIN_EDGE_JAD;
 DROP TRIGGER LM_HE_TERRAIN_EDGE_JAU;
 DROP TRIGGER LM_HE_TERRAIN_EDGE_JBD;
 DROP TRIGGER LM_HE_TERRAIN_EDGE_JBU;
-
 commit;
 
 -- *******************************************************************

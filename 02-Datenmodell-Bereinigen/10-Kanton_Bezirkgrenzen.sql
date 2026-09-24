@@ -37,7 +37,6 @@ delete from TB_JOB_VERSION jv where EXISTS (select * from LM_DISTRICT_TEDG tab w
 delete from TB_JOB_VERSION jv where EXISTS (select * from LM_DISTRICT_TISL tab where tab.FID = jv.FID);
 delete from TB_JOB_VERSION jv where EXISTS (select * from LM_DISTRICT_TSER tab where tab.FID = jv.FID);
 delete from TB_JOB_VERSION jv where EXISTS (select * from LM_DISTRICT_TSUR tab where tab.FID = jv.FID);
-
 commit;
 
 -- *******************************************************************
@@ -57,7 +56,6 @@ delete TB_UFID uf where EXISTS (select 1 from LM_DISTRICT_TEDG tab where tab.FID
 delete TB_UFID uf where EXISTS (select 1 from LM_DISTRICT_TISL tab where tab.FID = uf.FID);
 delete TB_UFID uf where EXISTS (select 1 from LM_DISTRICT_TSER tab where tab.FID = uf.FID);
 delete TB_UFID uf where EXISTS (select 1 from LM_DISTRICT_TSUR tab where tab.FID = uf.FID);
-
 commit;
 
 -- *******************************************************************
@@ -137,7 +135,6 @@ DROP TRIGGER LM_DISTRICT_TSUR_JAD;
 DROP TRIGGER LM_DISTRICT_TSUR_JAU;
 DROP TRIGGER LM_DISTRICT_TSUR_JBD;
 DROP TRIGGER LM_DISTRICT_TSUR_JBU;
-
 commit;
 
 -- *******************************************************************
@@ -166,5 +163,4 @@ call &&mapsysname..FeatureClass.dropFeatureClass('LM_DISTRICT_TSUR');
 
 -- Domain Tabellen
 call &&mapsysname..Domain.dropDomainTable('LM_AD_DISTRICT_NAME_TBD');
-
 commit;

@@ -29,7 +29,6 @@ update LM_ORIGIN_TBD set value = 'GPS', commentary = 'GPS', short_value = 'SE' w
 update LM_ORIGIN_TBD set value = 'digitalisiert', commentary = 'grafisch', short_value = 'SE' where ID = 10;
 commit;
 
-
 -- *******************************************************************
 -- CHECK-ID: 020403
 -- Sprachen anapssen
@@ -40,7 +39,6 @@ update LM_LANGUAGE_TBD set value = 'Französisch' where ID = 3;
 update LM_LANGUAGE_TBD set value = 'Italienisch' where ID = 4;
 update LM_LANGUAGE_TBD set value = 'Rätoromanisch' where ID = 5;
 commit;
-
 
 -- *******************************************************************
 -- CHECK-ID: 020404
@@ -63,6 +61,9 @@ commit;
 -- Prüfen ob es Datensätze hat, die einen Wert aus der Domaine verwenden
 call job3.setjob(-1);
 select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);
+-- spezial Fall ID 14 merken für späteres Update nachträgliche Vermarkung
+alter table LM_OW_BOUNDARYPOINT add TEMP_DELAY number(1);
+update LM_OW_BOUNDARYPOINT set TEMP_DELAY = 1 where ID_POINT_MARK = 14;
 -- Werte korrigieren
 update LM_OW_BOUNDARYPOINT set ID_POINT_MARK = 8 /*uv*/ where ID_POINT_MARK in (11 /*GB_Hilfspunkt*/,14 /*proj Punkt*/,18 /*andere*/,19 /*Kirchturm*/);
 update LM_OW_BOUNDARYPOINT set ID_POINT_MARK = 2 /*Stein*/ where ID_POINT_MARK in (9 /*Stein_Kunstoffzeichen*/,12 /*SdR Punkt*/,13 /*schoener_Stein*/);
@@ -95,7 +96,6 @@ update LM_LC_SURFACE_L set ID_LINETYPE = 10001 where ID_LINETYPE in (30001);
 -- Werte entfernen
 delete from LM_LC_LINETYPE_TBD where ID in (14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
 commit;
-
 
 -- *******************************************************************
 -- CHECK-ID: 020408

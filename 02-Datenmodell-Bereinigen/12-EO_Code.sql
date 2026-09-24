@@ -39,7 +39,6 @@ commit;
 -- Trigger entfernen
 -- *******************************************************************
 DROP TRIGGER LM_SO_CODE_FID;
-
 commit;
 
 -- *******************************************************************
@@ -47,7 +46,5 @@ commit;
 -- Tabellen/Objektklassen entfernen
 -- *******************************************************************
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_SO_CODE');
-
 call &&mapsysname..FeatureClass.dropColumnFromFeatureClass('LM_SO_OBJECT_NUMBER', 'FID_SO_CODE');
-
 commit;

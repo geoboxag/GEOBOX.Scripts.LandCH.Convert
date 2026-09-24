@@ -72,5 +72,4 @@ commit;
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LC_CLASSIFICATION');
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LC_CLASSIFICATION_PROJ');
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LC_CODE');
-
 commit;

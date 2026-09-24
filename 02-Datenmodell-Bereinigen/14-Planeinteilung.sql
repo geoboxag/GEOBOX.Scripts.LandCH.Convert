@@ -191,7 +191,6 @@ DROP TRIGGER LM_IP_MINE_PLAN_FID;
 DROP TRIGGER LM_IP_MINE_PLAN_TSER_BIR; 
 DROP TRIGGER LM_IP_MINE_PLAN_TSER_BUR; 
 DROP TRIGGER LM_IP_MINE_PLAN_TSER_FID; 
-
 commit;
 
 -- *******************************************************************

@@ -22,14 +22,12 @@ select name, counts from (
   select 'LM_SO_SYMBOL' name, count(1) counts from LM_SO_SYMBOL where ID_PLAN_CATEGORY is not NULL
 );
 
-
 -- *******************************************************************
 -- CHECK-ID: 022402
 -- Attribute entfernen
 -- *******************************************************************
 call &&mapsysname..FeatureClass.dropColumnFromFeatureClass('LM_LC_SYMBOL', 'ID_PLAN_CATEGORY');
 call &&mapsysname..FeatureClass.dropColumnFromFeatureClass('LM_SO_SYMBOL', 'ID_PLAN_CATEGORY');
-
 commit;
 
 -- *******************************************************************
@@ -38,5 +36,4 @@ commit;
 -- *******************************************************************
 -- Domain Tabellen
 call &&mapsysname..Domain.dropDomainTable('LM_SO_PLAN_CATEGORY_TBD');
-
 commit;

@@ -50,7 +50,6 @@ call &&mapsysname..FeatureClass.dropFeatureClass('LM_V_DSP_LFP4');
 drop view LM_V_DSP_LFP4;
 commit;
 
-
 -- *******************************************************************
 -- CHECK-ID: 020604
 -- Ansichten aus KantonsKit Bern entfernen

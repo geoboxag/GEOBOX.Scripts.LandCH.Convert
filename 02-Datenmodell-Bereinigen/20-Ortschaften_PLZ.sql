@@ -95,7 +95,6 @@ DROP TRIGGER LM_LO_NPA6_JAD;
 DROP TRIGGER LM_LO_NPA6_JAU;
 DROP TRIGGER LM_LO_NPA6_JBD;
 DROP TRIGGER LM_LO_NPA6_JBU;
-
 commit;
 
 -- *******************************************************************
@@ -105,7 +104,6 @@ commit;
 -- Verschnitte entfernen (wird später wieder korrekt angelegt)
 call &&mapsysname..TBIntersection.dropIntersection('NPA6/House Entrance');
 call &&mapsysname..TBIntersection.dropIntersection('NPA6/House Entrance Pending');
-
 commit;
 
 -- Objektklassen
@@ -114,5 +112,4 @@ call &&mapsysname..FeatureClass.dropFeatureClass('LM_LO_LOCALITY');
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LO_LOCALITY_NAME');
 call &&mapsysname..FeatureClass.DropLabelFeatureClass('LM_LO_LOCALITY_NAME_TBL');
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LO_NPA6');
-
 commit;

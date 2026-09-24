@@ -172,5 +172,4 @@ call &&mapsysname..Domain.dropDomainTable('LM_CO_CONS_LINETYPE_TBD');
 call &&mapsysname..Domain.dropDomainTable('LM_CO_CONS_POINTTYPE_TBD');
 call &&mapsysname..Domain.dropDomainTable('LM_CO_DTM_LINETYPE_TBD');
 call &&mapsysname..Domain.dropDomainTable('LM_CO_DTM_POINTTYPE_TBD');
-
 commit;

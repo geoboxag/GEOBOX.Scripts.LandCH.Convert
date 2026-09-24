@@ -25,7 +25,6 @@ select name, counts from (
 -- TB_JOB_VERSION bereinigen
 -- *******************************************************************
 delete from TB_JOB_VERSION jv where EXISTS (select * from LM_AD_LOT tab where tab.FID = jv.FID);
-
 commit;
 
 -- *******************************************************************
@@ -33,7 +32,6 @@ commit;
 -- TB_UFID bereinigen
 -- *******************************************************************
 delete TB_UFID uf where EXISTS (select 1 from LM_AD_LOT tab where tab.FID = uf.FID);
-
 commit;
 
 -- *******************************************************************
@@ -48,7 +46,6 @@ DROP TRIGGER LM_AD_LOT_JAD;
 DROP TRIGGER LM_AD_LOT_JAU;
 DROP TRIGGER LM_AD_LOT_JBD;
 DROP TRIGGER LM_AD_LOT_JBU;
-
 commit;
 
 -- *******************************************************************
@@ -57,5 +54,4 @@ commit;
 -- *******************************************************************
 -- Objektklassen
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_AD_LOT');
-
 commit;

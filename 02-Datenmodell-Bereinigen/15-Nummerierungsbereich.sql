@@ -54,7 +54,6 @@ DROP TRIGGER LM_ND_NDGEOMETRY_JAD;
 DROP TRIGGER LM_ND_NDGEOMETRY_JAU;
 DROP TRIGGER LM_ND_NDGEOMETRY_JBD;
 DROP TRIGGER LM_ND_NDGEOMETRY_JBU;
-
 commit;
 
 -- *******************************************************************
@@ -62,5 +61,4 @@ commit;
 -- Tabellen/Objektklassen entfernen
 -- *******************************************************************
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_ND_NDGEOMETRY');
-
 commit;
