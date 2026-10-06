@@ -1,29 +1,27 @@
 ----------------------------------------------------------------------
--- Gemeindegrenzen bereinigen
+-- Grenzpunkte anpassen
+-- Nachträgliche Vermarkung
 ----------------------------------------------------------------------
 -- PUBLIC
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [26.03.2025] V 2025.1 / GEOBOX AG (USO) - Script für Umstellung DMAV erstellt
+-- [28.09.2026] V 1.1 / GEOBOX AG (USO) - Script erstellt.
 ----------------------------------------------------------------------
--- MAPSYS Name korrekt setzten
-define mapsysname = MAPSYS;
 
+-- *******************************************************************
+-- CHECK-ID: 050301
+-- Updaten des Attribut anhand des temporären Attributes
+-- *******************************************************************
 call job3.setjob(-1);
 
--- *******************************************************************
--- CHECK-ID: 020301
--- TB-Dictionary anpassen
--- *******************************************************************
-update TB_DICTIONARY
- set PARENT_F_CLASS_ID = (select F_CLASS_ID from TB_DICTIONARY where F_CLASS_NAME = 'LM_AD_MUNICIPALITY')
-where F_CLASS_NAME = 'LM_AD_MUNICIP_BOUND_PROJ';
+-- spezial Fall ID 14 nachträgliche Vermarkung aktualisieren
+update LM_OW_BOUNDARYPOINT set DELAYED_MONUMENTATION = TEMP_DELAY where TEMP_DELAY is not NULL;
 commit;
 
 -- *******************************************************************
--- CHECK-ID: 020302
--- Unnötiges Attribut entfernen
+-- CHECK-ID: 050302
+-- Temporäre Spalte entfernen.
 -- *******************************************************************
-call &&mapsysname..FeatureClass.dropColumnFromFeatureClass('LM_AD_MUNICIP_BOUNDARY_L', 'FID_AD_MUTPERIMETER');
+alter table LM_OW_BOUNDARYPOINT drop column TEMP_DELAY;
 commit;

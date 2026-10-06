@@ -121,8 +121,8 @@ commit;
 -- *******************************************************************
 call &&mapsysname..FeatureClass.dropFeatureClass('LM_LO_WAY');
 call &&mapsysname..FeatureClass.DropLabelFeatureClass('LM_LO_ROAD_CLASSIFICATION');
-call &&mapsysname..FeatureClass.DropLabelFeatureClass('LM_LO_TARGET_POINT');
 call &&mapsysname..FeatureClass.DropLabelFeatureClass('LM_LO_TARGET_POINT_TBL');
+call &&mapsysname..FeatureClass.DropLabelFeatureClass('LM_LO_TARGET_POINT');
 
 -- Domain Tabellen
 call &&mapsysname..Domain.dropDomainTable('LM_LO_WAYTYPE_TBD');

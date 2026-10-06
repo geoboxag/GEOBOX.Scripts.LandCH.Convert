@@ -35,6 +35,7 @@ commit;
 select * from LM_AD_MUTPERIMETER where ID_MUTATION_TYPE is NULL;
 -- Standardwert 3 = Normal eintragen
 update LM_AD_MUTPERIMETER set ID_MUTATION_TYPE = 3 where ID_MUTATION_TYPE is null;
+commit;
 
 -- *******************************************************************
 -- CHECK-ID: 070302

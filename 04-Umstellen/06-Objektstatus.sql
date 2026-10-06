@@ -99,7 +99,6 @@ select * from LM_SO_SINGLE_OBJECT where ID_STATE is NULL;
 drop table MIG_STATE_OBJECTS;
 commit; 
 
-
 -- *******************************************************************
 -- CHECK-ID: 040605
 -- Mutationsperimeter - Statuswerte umschreiben

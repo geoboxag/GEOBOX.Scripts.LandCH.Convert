@@ -36,9 +36,10 @@ FOR
   select F_CLASS_NAME FCLASSNAME from TB_DICTIONARY where F_CLASS_ID in (select F_CLASS_ID from TB_ATTRIBUTE where NAME = 'ILI2_OID') and F_CLASS_NAME not like 'LM_WS_%';
 commit;
 
-select * from (
-select fid, count(1) c from MIG_OID_OBJECTS group by fid) tab where c > 1
--- select * from MIG_OID_OBJECTS;
+-- Anzeigen der Objekte mit zwei einträgen (=> rechtsgültiges und pendentes Objekt gefunden)
+-- select * from (
+-- select fid, count(1) counter from MIG_OID_OBJECTS group by fid) tab where counter > 1;
+-- select * from MIG_OID_OBJECTS where FID = ;
 
 -- *******************************************************************
 -- CHECK-ID: 060203

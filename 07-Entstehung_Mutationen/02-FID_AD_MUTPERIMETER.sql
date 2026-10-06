@@ -42,7 +42,6 @@ insert into MIG_MUT_INFOS (select 'LM_OW_BOUNDARYPOINT', FID, JOB_VERSION, FID_A
 insert into MIG_MUT_INFOS (select 'LM_OW_DPR', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_DPR);                                 
 insert into MIG_MUT_INFOS (select 'LM_OW_MINE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_MINE);                               
 insert into MIG_MUT_INFOS (select 'LM_OW_PROPERTY', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_PROPERTY);                       
-insert into MIG_MUT_INFOS (select 'LM_OW_REAL_ESTATE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_REAL_ESTATE);                 
 insert into MIG_MUT_INFOS (select 'LM_PA_SO_PROJ', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_PA_SO_PROJ);                         
 insert into MIG_MUT_INFOS (select 'LM_PA_SURFACE_PROJ', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_PA_SURFACE_PROJ);               
 insert into MIG_MUT_INFOS (select 'LM_PI_PIPE_OBJECT', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_PI_PIPE_OBJECT);                 
@@ -53,7 +52,6 @@ insert into MIG_MUT_INFOS (select 'LM_SO_SINGLE_OBJECT', FID, JOB_VERSION, FID_A
 insert into MIG_MUT_INFOS (select 'LM_SO_SINGLE_POINT', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_SO_SINGLE_POINT);               
 insert into MIG_MUT_INFOS (select 'LM_TD_TOLERANCEDEGREE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_TD_TOLERANCEDEGREE);         
 
-
 insert into MIG_MUT_INFOS (select 'LM_AD_MUNICIP_BOUNDARY_A', a.FID, a.JOB_VERSION, f.FID_AD_MUTPERIMETER, null
 from
  LM_AD_MUNICIP_BOUNDARY_A a
@@ -63,11 +61,6 @@ insert into MIG_MUT_INFOS (select 'LM_LC_SURFACE_A', a.FID, a.JOB_VERSION, f.FID
 from
  LM_LC_SURFACE_A a
  join LM_LC_SURFACE f on a.FID_PARENT = f.FID);
- 
-insert into MIG_MUT_INFOS (select 'LM_OW_REAL_ESTATE_A', a.FID, a.JOB_VERSION, f.FID_AD_MUTPERIMETER, null
-from
- LM_OW_REAL_ESTATE_A a
- join LM_OW_REAL_ESTATE f on a.FID_PARENT = f.FID);          
 
 commit;
 
@@ -82,9 +75,8 @@ insert into MIG_MUT_INFOS (select 'LM_OW_BOUNDARYPOINT', FID, JOB_VERSION, FID_A
 insert into MIG_MUT_INFOS (select 'LM_OW_DPR', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_DPR tab where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = tab.JOB_VERSION));                                 
 insert into MIG_MUT_INFOS (select 'LM_OW_MINE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_MINE tab where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = tab.JOB_VERSION));                               
 insert into MIG_MUT_INFOS (select 'LM_OW_PROPERTY', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_PROPERTY tab where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = tab.JOB_VERSION));                       
-insert into MIG_MUT_INFOS (select 'LM_OW_REAL_ESTATE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_OW_REAL_ESTATE tab where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = tab.JOB_VERSION));                 
 insert into MIG_MUT_INFOS (select 'LM_SE_SERVITUDE', FID, JOB_VERSION, FID_AD_MUTPERIMETER, null from LM_SE_SERVITUDE tab where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = tab.JOB_VERSION));                     
-
+ 
 commit;
 
 -- *******************************************************************
@@ -126,6 +118,77 @@ select DISTINCT job.ID, job.NAME, job.IS_MAINTENANCE, DECODE(mut.FID,NULL,'nein'
  join TB_JOB job on job.ID = jv.JOB_ID
  left join LM_AD_MUTPERIMETER mut on mut.ID_JOB = job.ID
 where exists (select 1 from MIG_MUT_INFOS i where i.FID_AD_MUTPERIMETER is NULL and i.JOB_VERSION = jv.JOB_VERSION);
+
+-- *******************************************************************
+-- CHECK-ID: 070204
+-- Liegenschaften und Sekundärflächen > Übernahme der Mutation vom Grundstück
+-- *******************************************************************
+-- alle Rechtskräftigen eintragen
+call job3.setjob(1);
+
+insert into MIG_MUT_INFOS (
+select 'LM_OW_REAL_ESTATE',
+  F.FID FID,
+  F.JOB_VERSION JOB_VERSION,
+  PR.FID_AD_MUTPERIMETER,
+  null
+from
+ LM_OW_REAL_ESTATE F
+ join LM_REAL_ESTATE_TCEN TC on TC.FID_CENTROID = F.FID
+ join LM_REAL_ESTATE_TSUR TS on TS.FID = TC.FID_TSUR
+ join LM_OW_PROPERTY PR on F.FID_OW_PROPERTY = PR.FID
+where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = F.JOB_VERSION));
+commit;
+
+insert into MIG_MUT_INFOS (
+select 'LM_OW_REAL_ESTATE_A',
+  F.FID FID,
+  F.JOB_VERSION JOB_VERSION,
+  PR.FID_AD_MUTPERIMETER,
+  null
+from
+ LM_OW_REAL_ESTATE_A F
+ join LM_OW_REAL_ESTATE RE on F.FID_PARENT = RE.FID
+ join LM_REAL_ESTATE_TCEN TC on TC.FID_CENTROID = RE.FID
+ join LM_REAL_ESTATE_TSUR TS on TS.FID = TC.FID_TSUR
+ join LM_OW_PROPERTY PR on RE.FID_OW_PROPERTY = PR.FID
+where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = F.JOB_VERSION));
+commit;
+
+-- mit Pendenten ergänzen
+call job3.setjob(2);
+
+insert into MIG_MUT_INFOS (
+select 'LM_OW_REAL_ESTATE',
+  F.FID FID,
+  F.JOB_VERSION JOB_VERSION,
+  PR.FID_AD_MUTPERIMETER,
+  null
+from
+ LM_OW_REAL_ESTATE F
+ join LM_REAL_ESTATE_TCEN TC on TC.FID_CENTROID = F.FID
+ join LM_REAL_ESTATE_TSUR TS on TS.FID = TC.FID_TSUR
+ join LM_OW_PROPERTY PR on F.FID_OW_PROPERTY = PR.FID
+where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = F.JOB_VERSION));
+commit;
+
+insert into MIG_MUT_INFOS (
+select 'LM_OW_REAL_ESTATE_A',
+  F.FID FID,
+  F.JOB_VERSION JOB_VERSION,
+  PR.FID_AD_MUTPERIMETER,
+  null
+from
+ LM_OW_REAL_ESTATE_A F
+ join LM_OW_REAL_ESTATE RE on F.FID_PARENT = RE.FID
+ join LM_REAL_ESTATE_TCEN TC on TC.FID_CENTROID = RE.FID
+ join LM_REAL_ESTATE_TSUR TS on TS.FID = TC.FID_TSUR
+ join LM_OW_PROPERTY PR on RE.FID_OW_PROPERTY = PR.FID
+where not exists (select 1 from MIG_MUT_INFOS mi where mi.JOB_VERSION = F.JOB_VERSION));
+commit;
+
+-- Kontrolle
+select * from MIG_MUT_INFOS where FID_AD_MUTPERIMETER is NULL;
 
 -- *******************************************************************
 -- CHECK-ID: 070204
@@ -291,6 +354,7 @@ repeat
 for
  select F_CLASS_NAME FCLASSNAME from TB_DICTIONARY where F_CLASS_ID in (select F_CLASS_ID from TB_ATTRIBUTE where NAME in ('ILI2_OID', 'FID_AD_MUTPERIMETER_PEND') GROUP BY F_CLASS_ID HAVING COUNT(F_CLASS_ID) = 2) and F_CLASS_NAME not like 'LM_WS_%';
 
+commit;
 
 -- *******************************************************************
 -- CHECK-ID: 070208
