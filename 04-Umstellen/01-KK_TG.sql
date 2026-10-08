@@ -24,3 +24,12 @@ commit;
 update TB_SETTINGS set ITEMTHEMA= 'GEOBOX.IM.CH.LandCH.EGRID' where ITEMTHEMA='AUTODESK.LANDCH.EGRID';
 update TB_SETTINGS set ITEMTHEMA= 'GEOBOX.IM.CH.JobMapRenderer' where ITEMTHEMA='AC_JOBMAPRENDERER';
 commit;
+
+-- *******************************************************************
+-- Grundstücke - Qualität abfüllen
+-- *******************************************************************
+call job3.setjob(-1);
+-- Qualität Standardmässig auf AV93
+update LM_OW_PROPERTY set ID_QUALITY = 2 where ID_QUALITY is null;
+commit;
+call job3.setjob(1);

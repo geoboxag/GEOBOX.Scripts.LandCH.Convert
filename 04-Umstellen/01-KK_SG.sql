@@ -48,3 +48,12 @@ delete from TB_JOB_TEMPLATE_DEF where JOB_TEMPLATE_ID = (select ID from TB_JOB_T
 delete from TB_JOB_TEMPLATE_DEF where JOB_TEMPLATE_ID = (select ID from TB_JOB_TEMPLATE where NAME = 'Hoheitsgrenzen');
 delete from TB_JOB_TEMPLATE_DEF where JOB_TEMPLATE_ID = (select ID from TB_JOB_TEMPLATE where NAME = 'Dienstbarkeiten');
 commit;
+
+-- *******************************************************************
+-- Grundstücke - Qualität abfüllen
+-- *******************************************************************
+call job3.setjob(-1);
+-- Qualität Standardmässig auf AV93
+update LM_OW_PROPERTY set ID_QUALITY = 2 where ID_QUALITY is null;
+commit;
+call job3.setjob(1);

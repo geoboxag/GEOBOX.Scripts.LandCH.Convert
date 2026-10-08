@@ -74,7 +74,7 @@ select distinct lc.ID_LC_TYPE, TBD.VALUE, TBD.ACTIVE
 ----------------------------------------------------------------------
 -- Dienstbarkeiten
 ----------------------------------------------------------------------
--- NBIdent abgefüllt (dies ist neu ein Pflichtgfeld im DMAV Interlis)
+-- NBIdent abgefüllt (neu Pflichtfeld im DMAV)
 select * from LM_SE_SERVITUDE where FID_IDENTND is NULL;
 
 -- Flächenelement mit korrektem Geometrie TYPE
@@ -99,7 +99,7 @@ WHERE
 -- call job3.setjob(-1);
 -- call MAPSYS.TBCompound.updateCompoundFeatureClass('LM_SE_SURFACE_ELEMENT');
 
--- Kontrolle ID - Vollständigkeit (ist neu ein Pflichtgfeld)
+-- Kontrolle ID - Vollständigkeit (neu Pflichtfeld im DMAV)
 select * from LM_SE_SERVITUDE where ID_COMPLETENESS is NULL;
 
 ----------------------------------------------------------------------
@@ -143,6 +143,10 @@ WHERE linked.FID_LO_LOCATION IS NULL;
 ----------------------------------------------------------------------
 -- Grundstücke
 ----------------------------------------------------------------------
+-- Qualitätststandand (neu Pflichtfeld im DMAV)
+call job3.setjob(-1);
+select * from LM_OW_PROPERTY where ID_QUALITY is NULL;
+
 -- Grenzpunkte
 call job3.setjob(-1);
 select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);

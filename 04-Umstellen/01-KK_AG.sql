@@ -88,6 +88,14 @@ commit;
 drop table TB_KGWR_LIST;
 commit;
 
+-- *******************************************************************
+-- Grundstücke - Qualität abfüllen
+-- *******************************************************************
+call job3.setjob(-1);
+-- Qualität Standardmässig auf AV93
+update LM_OW_PROPERTY set ID_QUALITY = 2 where ID_QUALITY is null;
+commit;
+call job3.setjob(1);
 
 -- *******************************************************************
 -- Dienstbarkeiten - NBIdent für den Kanton AG abfüllen und ID - Vollständigkeit (IstVollständig) mit Standardwert abfüllen
