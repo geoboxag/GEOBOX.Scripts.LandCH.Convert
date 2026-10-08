@@ -88,6 +88,18 @@ commit;
 drop table TB_KGWR_LIST;
 commit;
 
+
+-- *******************************************************************
+-- Dienstbarkeiten - NBIdent für den Kanton AG abfüllen und ID - Vollständigkeit (IstVollständig) mit Standardwert abfüllen
+-- *******************************************************************
+call job3.setjob(-1);
+-- NBIdent
+update LM_SE_SERVITUDE set  FID_IDENTND = (select FID from LM_ND_NUMBER_DOMAIN  where TECHDOSSIER ='eAV93_HB' group by FID );
+-- ID - Vollständigkeit (IstVollständig)
+update LM_SE_SERVITUDE  set ID_COMPLETENESS =2 where ID_COMPLETENESS is null;
+commit;
+call job3.setjob(1);
+
 -- *******************************************************************
 -- KantonsKit spezifische Ansichten (Views) entfernen
 -- *******************************************************************

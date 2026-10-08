@@ -74,7 +74,7 @@ select distinct lc.ID_LC_TYPE, TBD.VALUE, TBD.ACTIVE
 ----------------------------------------------------------------------
 -- Dienstbarkeiten
 ----------------------------------------------------------------------
--- NBIdent abgefüllt
+-- NBIdent abgefüllt (dies ist neu ein Pflichtgfeld im DMAV Interlis)
 select * from LM_SE_SERVITUDE where FID_IDENTND is NULL;
 
 -- Flächenelement mit korrektem Geometrie TYPE
@@ -98,6 +98,9 @@ WHERE
 -- Beim Compound-Objekt könnte helfen, die Geomtrien nue zu erstellen
 -- call job3.setjob(-1);
 -- call MAPSYS.TBCompound.updateCompoundFeatureClass('LM_SE_SURFACE_ELEMENT');
+
+-- Kontrolle ID - Vollständigkeit (ist neu ein Pflichtgfeld)
+select * from LM_SE_SERVITUDE where ID_COMPLETENESS is NULL;
 
 ----------------------------------------------------------------------
 -- Einzelobjekte
