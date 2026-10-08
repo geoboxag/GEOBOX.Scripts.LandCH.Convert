@@ -207,7 +207,7 @@ select
 from
   MIG_MUT_INFOS mi
   join MIG_MUT_INFOS mii on mii.FID = mi.FID and mii.JOB_VERSION <> mi.JOB_VERSION 
-order by mi.FID;
+order by mi.FID, mi.JOB_VERSION;
 
 -- *******************************************************************
 -- CHECK-ID: 070205
