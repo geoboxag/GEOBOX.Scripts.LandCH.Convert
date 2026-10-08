@@ -52,11 +52,11 @@ update LM_AD_MUTPERIMETER a set a.geom = sdo_util.rectify_geometry(a.geom, 0.000
 ----------------------------------------------------------------------
 -- Bodenbedeckung
 ----------------------------------------------------------------------
+-- Die Werte müssen je nach dem Abgefüllt sein
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_LC_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
 -- CH091202: DEFINED(Hoehengeometrie)==DEFINED(IstHoehenzuverlaessig);
-select * from LM_LC_SINGLE_POINT where TB_RELIABILITY_HEIGHT is null and Z is not null;
-
+select * from LM_LC_SINGLE_POINT where TB_HEIGHT_RELIABLE is null and Z is not null;
 
 -- Bodenbedeckungstyp DMAV prüfen (sind alle Werte gemäss DMAV eingetragen oder hat es andere?)
 select * from LM_LC_SURFACE lc where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59);
@@ -105,10 +105,11 @@ select * from LM_SE_SERVITUDE where ID_COMPLETENESS is NULL;
 ----------------------------------------------------------------------
 -- Einzelobjekte
 ----------------------------------------------------------------------
+-- Die Werte müssen je nach dem Abgefüllt sein
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_SO_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
 -- CH091202: DEFINED(Hoehengeometrie)==DEFINED(IstHoehenzuverlaessig);
-select * from LM_SO_SINGLE_POINT where TB_RELIABILITY_HEIGHT is null and Z is not null;
+select * from LM_SO_SINGLE_POINT where TB_HEIGHT_RELIABLE is null and Z is not null;
 
 -- Einzelobjektart DMAV prüfen (sind alle Werte gemäss DMAV eingetragen oder hat es andere?)
 select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70);
@@ -150,3 +151,10 @@ select * from LM_OW_PROPERTY where ID_QUALITY is NULL;
 -- Grenzpunkte
 call job3.setjob(-1);
 select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);
+
+-- Die Werte müssen je nach dem Abgefüllt sein
+-- CH040201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
+select * from LM_OW_BOUNDARYPOINT where TB_ACCURACY_HEIGHT is null and Z is not null;
+-- CH040202: DEFINED(Hoehengeometrie)==DEFINED(IstHoehenzuverlaessig);
+select * from LM_OW_BOUNDARYPOINT where TB_HEIGHT_RELIABLE is null and Z is not null;
+

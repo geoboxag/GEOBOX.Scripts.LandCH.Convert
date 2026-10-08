@@ -139,3 +139,4 @@ update LM_SO_SINGLE_OBJECT set ID_TYPE = 32 where ID_TYPE in (53,68);
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 39 where ID_TYPE in (64,69,104);
 -- Jauchegrube, Mistlege
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 70 where ID_TYPE in (71,72);
+commit;
