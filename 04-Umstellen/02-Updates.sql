@@ -5,7 +5,7 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [12.02.2025] V 1.2 / GEOBOX AG (USO) - Script verbessert.
+-- [16.10.2026] V 1.3 / GEOBOX AG (USO) - Script verbessert. EO Arten für das KGK angepasst.
 ----------------------------------------------------------------------
 -- MAPSYS Name korrekt setzten
 define mapsysname = MAPSYS;
@@ -117,8 +117,9 @@ update LM_SO_SINGLE_OBJECT set ID_TYPE = 3 where ID_TYPE in (93,108,109);
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 4 where ID_TYPE in (47,48,52,61,77,78,91,92,102);
 -- Brücke, Passerelle (für KGK ohne die ID's 59, 60)
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 8 where ID_TYPE in (59,60);
--- Silo, Turm, Gasometer  (für KGK ohne die ID's 73)
+-- Silo, Turm, Gasometer  (für KGK den zweiten Befehl verwenden)
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 13 where ID_TYPE in (73,103);
+--update LM_SO_SINGLE_OBJECT set ID_TYPE = 73 where ID_TYPE in (103);
 -- Mast, Antenne
 update LM_SO_SINGLE_OBJECT set ID_TYPE = 16 where ID_TYPE in (94,95);
 -- Uferverbauung
