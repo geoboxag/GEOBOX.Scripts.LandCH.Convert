@@ -52,6 +52,11 @@ update LM_AD_MUTPERIMETER a set a.geom = sdo_util.rectify_geometry(a.geom, 0.000
 ----------------------------------------------------------------------
 -- Bodenbedeckung
 ----------------------------------------------------------------------
+-- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_LC_SINGLE_POINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
+-- ISTLAGEZUVERLAESSIG: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_LC_SINGLE_POINT where TB_POSITION_RELIABLE is NULL or TB_POSITION_RELIABLE > 1;
+
 -- Die Werte müssen je nach dem Abgefüllt sein
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_LC_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
@@ -105,6 +110,11 @@ select * from LM_SE_SERVITUDE where ID_COMPLETENESS is NULL;
 ----------------------------------------------------------------------
 -- Einzelobjekte
 ----------------------------------------------------------------------
+-- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_SO_SINGLE_POINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
+-- ISTLAGEZUVERLAESSIG: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_SO_SINGLE_POINT where TB_POSITION_RELIABLE is NULL or TB_POSITION_RELIABLE > 1;
+
 -- Die Werte müssen je nach dem Abgefüllt sein
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_SO_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
@@ -151,6 +161,12 @@ select * from LM_OW_PROPERTY where ID_QUALITY is NULL;
 -- Grenzpunkte
 call job3.setjob(-1);
 select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);
+
+
+-- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_OW_BOUNDARYPOINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
+-- ISTLAGEZUVERLAESSIG: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
+select * from LM_OW_BOUNDARYPOINT where TB_POSITION_RELIABLE is NULL or TB_POSITION_RELIABLE > 1;
 
 -- Die Werte müssen je nach dem Abgefüllt sein
 -- CH040201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
