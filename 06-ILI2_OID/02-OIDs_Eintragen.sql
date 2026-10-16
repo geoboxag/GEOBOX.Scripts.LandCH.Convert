@@ -6,7 +6,7 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [01.04.2025] V 1.0 / GEOBOX AG (USO) - Script erstellt.
+-- [16.10.2026] V 1.1 / GEOBOX AG (USO) - Script ergänzt mit den pendent gelöschten Objekte im Thema Grundstücke.
 ----------------------------------------------------------------------
 
 -- *******************************************************************
@@ -35,6 +35,44 @@ repeat
 FOR
   select F_CLASS_NAME FCLASSNAME from TB_DICTIONARY where F_CLASS_ID in (select F_CLASS_ID from TB_ATTRIBUTE where NAME = 'ILI2_OID') and F_CLASS_NAME not like 'LM_WS_%';
 commit;
+
+-- Pendente gelöschte Objekte hinzufügen
+call job3.setjob(-1);
+-- Grenzpunkte
+insert into MIG_OID_OBJECTS
+select 'LM_OW_BOUNDARYPOINT', tab.FID, tab.JOB_VERSION from
+ LM_OW_BOUNDARYPOINT tab
+ join TB_JOB_VERSION jv on tab.JOB_VERSION = jv.JOB_VERSION
+where jv.STATE = 2 and jv.JOB_OPERATION_ID = 3
+and not exists (select 1 from MIG_OID_OBJECTS mi where mi.JOB_VERSION = tab.JOB_VERSION);
+-- Grundstücke
+insert into MIG_OID_OBJECTS
+select 'LM_OW_PROPERTY', tab.FID, tab.JOB_VERSION from
+ LM_OW_PROPERTY tab
+ join TB_JOB_VERSION jv on tab.JOB_VERSION = jv.JOB_VERSION
+where jv.STATE = 2 and jv.JOB_OPERATION_ID = 3
+and not exists (select 1 from MIG_OID_OBJECTS mi where mi.JOB_VERSION = tab.JOB_VERSION);
+-- Liegenschaften
+insert into MIG_OID_OBJECTS
+select 'LM_OW_REAL_ESTATE', tab.FID, tab.JOB_VERSION from
+ LM_OW_REAL_ESTATE tab
+ join TB_JOB_VERSION jv on tab.JOB_VERSION = jv.JOB_VERSION
+where jv.STATE = 2 and jv.JOB_OPERATION_ID = 3
+and not exists (select 1 from MIG_OID_OBJECTS mi where mi.JOB_VERSION = tab.JOB_VERSION);
+-- Bergwerke
+insert into MIG_OID_OBJECTS
+select 'LM_OW_MINE', tab.FID, tab.JOB_VERSION from
+ LM_OW_MINE tab
+ join TB_JOB_VERSION jv on tab.JOB_VERSION = jv.JOB_VERSION
+where jv.STATE = 2 and jv.JOB_OPERATION_ID = 3
+and not exists (select 1 from MIG_OID_OBJECTS mi where mi.JOB_VERSION = tab.JOB_VERSION);
+-- Selbstrechte
+insert into MIG_OID_OBJECTS
+select 'LM_OW_DPR', tab.FID, tab.JOB_VERSION from
+ LM_OW_DPR tab
+ join TB_JOB_VERSION jv on tab.JOB_VERSION = jv.JOB_VERSION
+where jv.STATE = 2 and jv.JOB_OPERATION_ID = 3
+and not exists (select 1 from MIG_OID_OBJECTS mi where mi.JOB_VERSION = tab.JOB_VERSION);
 
 -- Anzeigen der Objekte mit zwei einträgen (=> rechtsgültiges und pendentes Objekt gefunden)
 -- select * from (

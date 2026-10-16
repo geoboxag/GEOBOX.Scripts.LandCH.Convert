@@ -6,7 +6,7 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [05.09.2025] V 1.1 / GEOBOX AG (USO) - Verbesserungen am Skript für die Hoheitsgrenzen.
+-- [16.10.2026] V 1.2 / GEOBOX AG (USO) - Verbesserungen am Skript für die Gebäude und Lokalisation
 ----------------------------------------------------------------------
 call job3.setjob(-1);
 -- *******************************************************************
@@ -19,9 +19,9 @@ update LM_AD_MUTPERIMETER m set ILI2_OID_ACP = regexp_replace(LOWER(sys_guid()),
 /* LM_AD_TERRETORIAL_BOUNDARY */
 update LM_AD_MUTPERIMETER m set ILI2_OID_AD = regexp_replace(LOWER(sys_guid()), '([A-Za-z0-9]{8})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{12})', '\1-\2-\3-\4-\5')
 where exists (select 1 from TB_JOB j join TB_JOB_TOPIC jt on jt.JOB_ID = j.ID join TB_JOB_FCLASS jfc on jfc.JOB_TOPIC_ID = jt.ID join TB_DICTIONARY dict on dict.F_CLASS_ID = jfc.F_CLASS_ID where m.ID_JOB = j.ID and dict.F_CLASS_NAME in ('LM_AD_CANTON_BOUNDARY_L', 'LM_AD_DISTRICT_BOUNDARY_L', 'LM_AD_MUNICIPALITY', 'LM_AD_MUNICIPALITY_TBL', 'LM_AD_MUNICIP_BOUNDARY', 'LM_AD_MUNICIP_BOUNDARY_A', 'LM_AD_MUNICIP_BOUNDARY_L', 'LM_AD_MUNICIP_BOUND_PROJ'));
-/* LM_BUILDING */
+/* LM_BUILDING and LM_LOCATION */
 update LM_AD_MUTPERIMETER m set ILI2_OID_BU = regexp_replace(LOWER(sys_guid()), '([A-Za-z0-9]{8})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{12})', '\1-\2-\3-\4-\5')
- where exists (select 1 from TB_JOB j join TB_JOB_TOPIC jt on jt.JOB_ID = j.ID join TB_TOPIC t on t.ID = jt.TOPIC_ID where m.ID_JOB = j.ID and t.NAME = 'LM_BUILDING');
+ where exists (select 1 from TB_JOB j join TB_JOB_TOPIC jt on jt.JOB_ID = j.ID join TB_TOPIC t on t.ID = jt.TOPIC_ID where m.ID_JOB = j.ID and t.NAME in ('LM_BUILDING','LM_LOCATION'));
 /* LM_LAND_COVER */
 update LM_AD_MUTPERIMETER m set ILI2_OID_LC = regexp_replace(LOWER(sys_guid()), '([A-Za-z0-9]{8})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{4})([A-Za-z0-9]{12})', '\1-\2-\3-\4-\5')
  where exists (select 1 from TB_JOB j join TB_JOB_TOPIC jt on jt.JOB_ID = j.ID join TB_TOPIC t on t.ID = jt.TOPIC_ID where m.ID_JOB = j.ID and t.NAME = 'LM_LAND_COVER');
