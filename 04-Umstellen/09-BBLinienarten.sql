@@ -6,7 +6,7 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [01.04.2025] V 1.2 / GEOBOX AG (USO) - Script verbessert.
+-- [26.10.2025] V 1.5 / GEOBOX AG (USO) - Script verbessert (KGK Mapping hinzugefügt).
 ----------------------------------------------------------------------
 
 -- *******************************************************************
@@ -40,6 +40,8 @@ update MIG_BB_LINETYPE set ID_LINETYPE = 13 where ID_LINETYPE is NULL and LC_TYP
 update MIG_BB_LINETYPE set ID_LINETYPE = 13 where ID_LINETYPE is NULL and LC_TYPE1 = 42 and LC_TYPE2 = 41;
 
 update MIG_BB_LINETYPE set ID_LINETYPE = 2 where ID_LINETYPE is NULL and (LC_TYPE1 in (2,11,15,16,18,19,40,41) or LC_TYPE2 in (2,11,15,16,18,19,40,41));
+-- Update Befehl für KGK
+-- update MIG_BB_LINETYPE set ID_LINETYPE = 2 where ID_LINETYPE is NULL and (LC_TYPE1 in (2,11,12,13,15,16,18,19,23,40,41,60,66) or LC_TYPE2 in (2,11,12,13,15,16,18,19,23,40,41,60,66));
 
 update MIG_BB_LINETYPE set ID_LINETYPE = 4 where ID_LINETYPE is NULL;
 commit;
