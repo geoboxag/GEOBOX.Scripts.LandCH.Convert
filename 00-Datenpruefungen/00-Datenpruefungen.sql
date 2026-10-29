@@ -16,6 +16,7 @@ select * from LM_AD_MUTPERIMETER where FID_IDENTND is NULL;
 -- Keine doppelten Versionen vorhanden (Resultat sollte NULL sein)
 call job3.setjob(-1);
 select * from LM_AD_MUTPERIMETER mut where exists (select 1 from LM_AD_MUTPERIMETER m where m.FID = mut.FID and m.JOB_VERSION <> mut.JOB_VERSION) order by FID;
+-- Doppelte Mutationsperimeter können mit dem Script 01-Bereinigungen\diverses\FIX_doppleter_Mutperimeter.sql bereinigt werden.
 
 -- Verteckte Zeichen in der Beschreibung suchen
 select
@@ -43,7 +44,7 @@ where
  jv.FID <> jo.FID;
  
 -- Ungültige Geometrien prüfen:
-SELECT * FROM LM_AD_MUTPERIMETER t WHERE SDO_GEOM.VALIDATE_GEOMETRY_WITH_CONTEXT(t.GEOM, 0.0005) <> 'TRUE';
+SELECT * FROM LM_AD_MUTPERIMETER t WHERE GEOM is not NULL AND SDO_GEOM.VALIDATE_GEOMETRY_WITH_CONTEXT(t.GEOM, 0.0005) <> 'TRUE';
 -- Versuchen automatisch zu korrigieren
 call job3.setjob(-1);
 update LM_AD_MUTPERIMETER a set a.geom = sdo_util.rectify_geometry(a.geom, 0.0005) where substr(sdo_geom.validate_geometry_with_context(a.geom, 0.0005),1,5) in ('13347', '13356', '13367','13349','13346');
@@ -54,25 +55,45 @@ update LM_AD_MUTPERIMETER a set a.geom = sdo_util.rectify_geometry(a.geom, 0.000
 ----------------------------------------------------------------------
 -- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
 select * from LM_LC_SINGLE_POINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
+-- LAGEGENAUIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0.001...7.000]!
+-- update LM_LC_SINGLE_POINT set TB_ACCURACY_POSITION = x.x where TB_ACCURACY_POSITION is null;
 -- ISTLAGEZUVERLAESSIG: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
 select * from LM_LC_SINGLE_POINT where TB_POSITION_RELIABLE is NULL or TB_POSITION_RELIABLE > 1;
+-- LAGEZUVERLÄSSIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0,1]!
+-- update LM_LC_SINGLE_POINT set TB_POSITION_RELIABLE = x where TB_POSITION_RELIABLE is null;
 
--- Die Werte müssen je nach dem Abgefüllt sein
+-- Prüfung des zulässigen Wertebereichs der Höhe [-200..5000]:
+select * from LM_LC_SINGLE_POINT where Z < -200 or Z > 5000;
+
+-- Die Werte müssen Abgefüllt sein, wenn Höhe (Z) vorhanden:
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_LC_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
+-- Höhengenauigkeit mit Stadndardwerten abfüllen wenn leer und Höhe vorhanden. Standardwert noch eintragen [0.001...7.000]!
+-- update LM_LC_SINGLE_POINT set TB_ACCURACY_HEIGHT = x.x where TB_ACCURACY_HEIGHT is null and z is not null;
 -- CH091202: DEFINED(Hoehengeometrie)==DEFINED(IstHoehenzuverlaessig);
 select * from LM_LC_SINGLE_POINT where TB_HEIGHT_RELIABLE is null and Z is not null;
+-- LAGEZUVERLÄSSIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0,1]!
+-- update LM_LC_SINGLE_POINT set TB_HEIGHT_RELIABLE = x where TB_HEIGHT_RELIABLE is null and z is not null;
 
 -- Bodenbedeckungstyp DMAV prüfen (sind alle Werte gemäss DMAV eingetragen oder hat es andere?)
-select * from LM_LC_SURFACE lc where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59);
+-- Zusammenstellung der verwendeten ID_LC_TYPE mit Bezeichnung und Anzahl:
+select lc.ID_LC_TYPE, cat.VALUE, count(lc.FID)
+ from LM_LC_SURFACE lc left join LM_LC_CATEGORY_TBD cat on lc.ID_LC_TYPE = cat.ID
+ where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59)
+ group by ID_LC_TYPE, VALUE
+ order by ID_LC_TYPE;
+--Bie Bedarf können die einzelnen Datensätze angezeigt werden: 
+--select * from LM_LC_SURFACE lc where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59);
 
 -- Typen KGK prüfen
 -- select * from LM_LC_SURFACE lc where lc.ID_LC_TYPE not in (2,11,12,13,15,16,17,18,19,23,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,46,47,48,49,53,54,55,58,59,60,66);
 
 -- Domain-Werte ID_LC_TYPE prüfen (ACTIVE = 0)
+-- "--" Bei where-Zeile entfernen, um Standardzuweisungen auszuschliessen
 select distinct lc.ID_LC_TYPE, TBD.VALUE, TBD.ACTIVE
  from LM_LC_SURFACE lc
- left join LM_LC_CATEGORY_TBD tbd on lc.ID_LC_TYPE = tbd.ID;
+ left join LM_LC_CATEGORY_TBD tbd on lc.ID_LC_TYPE = tbd.ID
+ order by ID_LC_TYPE;
  
 -- GUT beurteilen, ob die Zuweisung für das Update auf die eigenen Bedürfnisse passt >> Updates sind im Skript 04-Umstellen - 02-Updates
 
@@ -112,17 +133,35 @@ select * from LM_SE_SERVITUDE where ID_COMPLETENESS is NULL;
 ----------------------------------------------------------------------
 -- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
 select * from LM_SO_SINGLE_POINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
+-- LAGEGENAUIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0.001...7.000]!
+-- update LM_SO_SINGLE_POINT set TB_ACCURACY_POSITION = x.x where TB_ACCURACY_POSITION is null;
 -- ISTLAGEZUVERLAESSIG: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
 select * from LM_SO_SINGLE_POINT where TB_POSITION_RELIABLE is NULL or TB_POSITION_RELIABLE > 1;
+-- LAGEZUVERLÄSSIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0,1]!
+-- update LM_SO_SINGLE_POINT set TB_POSITION_RELIABLE = x where TB_POSITION_RELIABLE is null;
+
+-- Prüfung des zulässigen Wertebereichs der Höhe [-200..5000]:
+select * from LM_SO_SINGLE_POINT where Z < -200 or Z > 5000;
 
 -- Die Werte müssen je nach dem Abgefüllt sein
 -- CH091201: DEFINED(Hoehengeometrie)==DEFINED(Hoehengenauigkeit)
 select * from LM_SO_SINGLE_POINT where TB_ACCURACY_HEIGHT is null and Z is not null;
+-- Höhengenauigkeit mit Stadndardwerten abfüllen wenn leer und Höhe vorhanden. Standardwert noch eintragen [0.001...7.000]!
+-- update LM_SO_SINGLE_POINT set TB_ACCURACY_HEIGHT = x.x where TB_ACCURACY_HEIGHT is null and z is not null;
 -- CH091202: DEFINED(Hoehengeometrie)==DEFINED(IstHoehenzuverlaessig);
 select * from LM_SO_SINGLE_POINT where TB_HEIGHT_RELIABLE is null and Z is not null;
+-- LAGEZUVERLÄSSIGKEIT mit Standardwerten abfüllen wenn leer. Standardwert noch eintragen [0,1]!
+-- update LM_SO_SINGLE_POINT set TB_HEIGHT_RELIABLE = x where TB_HEIGHT_RELIABLE is null and z is not null;
 
 -- Einzelobjektart DMAV prüfen (sind alle Werte gemäss DMAV eingetragen oder hat es andere?)
-select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70);
+-- Zusammenstellung der verwendeten ID_TYPE mit Bezeichnung und Anzahl:
+select so.ID_TYPE, cat.VALUE, count(so.FID) 
+ from LM_SO_SINGLE_OBJECT so left join LM_SO_OBJECT_CATEGORY_TBD cat on so.ID_TYPE = cat.id
+ where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70) 
+ group by ID_TYPE, VALUE 
+ order by ID_TYPE;
+--Bie Bedarf können die einzelnen Datensätze angezeigt werden:
+--select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70);
 
 -- Typen KGK prüfen
 -- select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,59,60,61,65,70,73);
