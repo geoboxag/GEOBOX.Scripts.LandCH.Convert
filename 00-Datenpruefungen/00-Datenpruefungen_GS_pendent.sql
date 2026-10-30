@@ -5,7 +5,7 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [24.09.2026] V 2025.2 / GEOBOX AG (USO) - Weitere Prüfungen hinzugefügt
+-- [24.09.2026] V 27.1 / GEOBOX AG (USO) - Weitere Prüfungen hinzugefügt
 ----------------------------------------------------------------------
 
 ----------------------------------------------------------------------
