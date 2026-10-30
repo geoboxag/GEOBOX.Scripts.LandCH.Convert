@@ -121,22 +121,31 @@ DELETE MIG_OW_REAL_ESTATE_A;
 commit;
 
 -- Pendente Objekte eintragen (Operation UPDATE) - Pendent geändert
+-- Ausgangslage ist, dass der Liegenscahftszentroid korrekt der Mutation zugewiesen ist.
 call job3.setjob(-1);
 insert into MIG_OW_REAL_ESTATE_A (FID_PARENT, GEOM, AREA, AREA_NOMINAL, EXACT_AREA, JOBID, VERSION, OPERATION_ID)
 select
- F.FID FID,
- TS.GEOM,
- TS.AREA,
- TS.AREA_NOMINAL,
- TS.EXACT_AREA,
- JV.JOB_ID JOBID,
- TS.JOB_VERSION VERSION,
+ re.FID FID,
+ ts.GEOM,
+ ts.AREA,
+ ts.AREA_NOMINAL,
+ ts.EXACT_AREA,
+ jv.JOB_ID JOBID,
+ ts.JOB_VERSION VERSION,
  2
 from
- LM_REAL_ESTATE_TSUR TS
- join TB_JOB_VERSION jv on TS.JOB_VERSION = jv.JOB_VERSION and jv.JOB_OPERATION_ID != 3
- join LM_REAL_ESTATE_TCEN TC on TC.FID_TSUR = TS.FID
- join (select DISTINCT F.FID from LM_OW_REAL_ESTATE F) F on F.FID = TC.FID_CENTROID
+ LM_OW_REAL_ESTATE re
+ join TB_JOB_VERSION jv on re.JOB_VERSION = jv.JOB_VERSION
+ join (select tc.FID, tc.JOB_VERSION, tc.FID_CENTROID, tc.FID_TSUR from
+   LM_REAL_ESTATE_TCEN tc 
+   join TB_JOB_VERSION tcjv on tc.JOB_VERSION = tcjv.JOB_VERSION
+   and tc.JOB_VERSION = (select max(jvt.JOB_VERSION) from TB_JOB_VERSION jvt where jvt.FID = tc.FID)
+  ) tc on tc.FID_CENTROID = re.FID
+ join (select ts.FID, ts.GEOM, ts.AREA, ts.AREA_NOMINAL, ts.EXACT_AREA, ts.JOB_VERSION from
+   LM_REAL_ESTATE_TSUR ts
+   join TB_JOB_VERSION tsjv on ts.JOB_VERSION = tsjv.JOB_VERSION
+   and ts.JOB_VERSION = (select max(jvt.JOB_VERSION) from TB_JOB_VERSION jvt where jvt.FID = ts.FID)
+  ) ts on ts.FID = tc.FID_TSUR
 where JV.JOB_ID in (
  select distinct
   j.ID
@@ -149,7 +158,7 @@ where JV.JOB_ID in (
  where
   v.STATE in (2) AND topic.NAME in ('LM_OWNERSHIP')
 )
-order by TS.FID, TS.JOB_VERSION;
+order by ts.FID, ts.JOB_VERSION;
 
 -- Datensätze ändern die neu Eingetragen werden sollen (Operation INSERT) - Pendent erstellt
 update MIG_OW_REAL_ESTATE_A a set a.OPERATION_ID = 1

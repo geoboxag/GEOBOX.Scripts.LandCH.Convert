@@ -5,16 +5,22 @@
 -- Verwendung auf eigene Gefahr!
 -- Script wird nicht supportet, es besteht kein Anspruch auf Vollständigkeit oder Korrektheit.
 ----------------------------------------------------------------------
--- [24.09.2026] V 2025.2 / GEOBOX AG (USO) - Weitere Prüfungen hinzugefügt
+-- [24.09.2026] V 27.3 / GEOBOX AG (USO) - Kleinere Verbesserungen
 ----------------------------------------------------------------------
+-- HINWEIS: die Prüfungen können wahlweise auf den pendenten Zustand oder auf alle (-1) Elemente angewendet werden.
+-- bei der Prüfung mit dem pendeten Zustand können allenfalls pendet, gelöschte Objekte nicht geprüft werden.
+-- Pendenter Zusatnd kontrollieren
+call job3.setjob(2);
+-- Alle Datensätze prüfen (auch gelöschte)
+call job3.setjob(-1);
 
 ----------------------------------------------------------------------
 -- Mutationsperimeter
 ----------------------------------------------------------------------
 -- NBIdent abgefüllt
 select * from LM_AD_MUTPERIMETER where FID_IDENTND is NULL;
+
 -- Keine doppelten Versionen vorhanden (Resultat sollte NULL sein)
-call job3.setjob(-1);
 select * from LM_AD_MUTPERIMETER mut where exists (select 1 from LM_AD_MUTPERIMETER m where m.FID = mut.FID and m.JOB_VERSION <> mut.JOB_VERSION) order by FID;
 -- Doppelte Mutationsperimeter können mit dem Script 01-Bereinigungen\diverses\FIX_doppleter_Mutperimeter.sql bereinigt werden.
 
@@ -82,7 +88,7 @@ select lc.ID_LC_TYPE, cat.VALUE, count(lc.FID)
  where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59)
  group by ID_LC_TYPE, VALUE
  order by ID_LC_TYPE;
---Bie Bedarf können die einzelnen Datensätze angezeigt werden: 
+--Bei Bedarf können die einzelnen Datensätze angezeigt werden: 
 --select * from LM_LC_SURFACE lc where lc.ID_LC_TYPE not in (2,11,15,16,17,18,19,29,30,31,32,36,39,40,41,42,43,46,47,48,49,53,54,55,58,59);
 
 -- Typen KGK prüfen
@@ -160,14 +166,20 @@ select so.ID_TYPE, cat.VALUE, count(so.FID)
  where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70) 
  group by ID_TYPE, VALUE 
  order by ID_TYPE;
---Bie Bedarf können die einzelnen Datensätze angezeigt werden:
+--Bei Bedarf können die einzelnen Datensätze angezeigt werden:
 --select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,65,70);
 
 -- Typen KGK prüfen
 -- select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE not in (2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,30,31,32,33,34,35,36,37,38,39,40,41,42,43,59,60,61,65,70,73);
 
 -- Nicht zuweisbare Arten (diese müssen Manuell geändert werden)
-select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE in (1,29,44,45,46,54,55,56,63,80,81,82,83,85,86,87,100,105,106,107,10000,10001);
+select so.ID_TYPE, cat.VALUE, count(so.FID) 
+ from LM_SO_SINGLE_OBJECT so left join LM_SO_OBJECT_CATEGORY_TBD cat on so.ID_TYPE = cat.id
+ where so.ID_TYPE in (1,29,44,45,46,54,55,56,63,80,81,82,83,85,86,87,100,105,106,107,10000,10001);
+ group by ID_TYPE, VALUE 
+ order by ID_TYPE;
+--Bei Bedarf können die einzelnen Datensätze angezeigt werden:
+-- select * from LM_SO_SINGLE_OBJECT so where so.ID_TYPE in (1,29,44,45,46,54,55,56,63,80,81,82,83,85,86,87,100,105,106,107,10000,10001);
 
 -- Domain-Werte ID_TYPE prüfen (ACTIVE = 0)
 select distinct so.ID_TYPE, TBD.VALUE, TBD.ACTIVE
@@ -194,13 +206,17 @@ WHERE linked.FID_LO_LOCATION IS NULL;
 -- Grundstücke
 ----------------------------------------------------------------------
 -- Qualitätststandand (neu Pflichtfeld im DMAV)
-call job3.setjob(-1);
 select * from LM_OW_PROPERTY where ID_QUALITY is NULL;
 
 -- Grenzpunkte
-call job3.setjob(-1);
-select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);
-
+-- prüfen sind alle Werte gemäss DMAV eingetragen oder hat es andere?
+select bp.ID_POINT_MARK, cat.VALUE, count(bp.FID) 
+ from LM_OW_BOUNDARYPOINT bp left join LM_OW_POINT_MARK_TBD cat on bp.ID_POINT_MARK = cat.ID
+where bp.ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19)
+group by bp.ID_POINT_MARK, cat.VALUE
+order by bp.ID_POINT_MARK;
+--Bei Bedarf können die einzelnen Datensätze angezeigt werden:
+-- select * from LM_OW_BOUNDARYPOINT where ID_POINT_MARK in (9,10,11,12,13,14,15,16,17,18,19);
 
 -- LAGEGENAUIGKEIT: Die Werte müssen abegüllt sein und in einem gültigen Bereich:
 select * from LM_OW_BOUNDARYPOINT where TB_ACCURACY_POSITION is NULL or TB_ACCURACY_POSITION < 0.001 or TB_ACCURACY_POSITION > 7.000;
